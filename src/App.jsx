@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import Button from "./components/Button";
 import words from "./words.json";
 
 function replaceWordsWithRandom(text, token, replacements) {
@@ -12,20 +13,21 @@ function replaceWordsWithRandom(text, token, replacements) {
 
 const App = () => {
   const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const parsedInput = useMemo(() => {
+  const parsedInput = () => {
     let text = input;
     words.forEach((word) => {
       text = replaceWordsWithRandom(text, word.token, word.replace);
     });
-    return text;
-  }, [input]);
+    setOutput(text);
+  };
 
   const handleClipboardCopy = () => {
-    if (parsedInput) {
+    if (output) {
       navigator.clipboard
-        .writeText(parsedInput)
+        .writeText(output)
         .then(() => {
           setCopied(true);
           setTimeout(() => {
@@ -44,16 +46,18 @@ const App = () => {
         <div className="container">
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2">
             <div>
-              <label className="block">Input: </label>
+              <div className="flex items-center justify-between">
+                <label>Input: </label>
+                <Button onClick={parsedInput}>Convert ></Button>
+              </div>
               <textarea
                 onChange={(ev) => {
                   setInput(ev.target.value);
                 }}
                 className="p-5 w-full mt-2 border rounded-md outline-none focus-visible:border-blue-200 min-h-[300px]"
                 placeholder="messages"
-              >
-                {input}
-              </textarea>
+                value={input}
+              ></textarea>
             </div>
             <div>
               <div className="flex items-center justify-between">
@@ -64,19 +68,16 @@ const App = () => {
                       Text Copied
                     </span>
                   ) : null}
-                  <button
-                    onClick={handleClipboardCopy}
-                    className="text-xs px-2 py-1 bg-black text-white rounded hover:bg-black/50 active:scale-95"
-                  >
+                  <Button onClick={handleClipboardCopy}>
                     Copy to Clipboard
-                  </button>
+                  </Button>
                 </div>
               </div>
               <div
                 className="p-5 w-full mt-2 border rounded-md outline-none focus-visible:border-blue-200 min-h-[300px]"
                 placeholder="messages"
               >
-                {parsedInput}
+                {output}
               </div>
             </div>
           </div>
