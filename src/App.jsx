@@ -12,6 +12,7 @@ function replaceWordsWithRandom(text, token, replacements) {
 
 const App = () => {
   const [input, setInput] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const parsedInput = useMemo(() => {
     let text = input;
@@ -20,6 +21,22 @@ const App = () => {
     });
     return text;
   }, [input]);
+
+  const handleClipboardCopy = () => {
+    if (parsedInput) {
+      navigator.clipboard
+        .writeText(parsedInput)
+        .then(() => {
+          setCopied(true);
+          setTimeout(() => {
+            setCopied(false);
+          }, 3000);
+        })
+        .catch((error) => {
+          alert("Something went wrong");
+        });
+    }
+  };
 
   return (
     <>
@@ -39,7 +56,22 @@ const App = () => {
               </textarea>
             </div>
             <div>
-              <label>Output: </label>
+              <div className="flex items-center justify-between">
+                <label>Output: </label>
+                <div>
+                  {copied ? (
+                    <span className="mr-4 text-green-500 font-bold text-xs">
+                      Text Copied
+                    </span>
+                  ) : null}
+                  <button
+                    onClick={handleClipboardCopy}
+                    className="text-xs px-2 py-1 bg-black text-white rounded hover:bg-black/50 active:scale-95"
+                  >
+                    Copy to Clipboard
+                  </button>
+                </div>
+              </div>
               <div
                 className="p-5 w-full mt-2 border rounded-md outline-none focus-visible:border-blue-200 min-h-[300px]"
                 placeholder="messages"
