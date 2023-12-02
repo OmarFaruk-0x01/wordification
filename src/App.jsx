@@ -35,10 +35,12 @@ const App = () => {
   const parsedInput = () => {
     let text = input;
     words.forEach((word) => {
-      if (replaceType == "random") {
-        text = replaceWordsWithRandom(text, word.token, word.replace);
-      } else {
-        text = replaceWordsWithReverse(text, word.token);
+      for (const token of word.tokens) {
+        if (replaceType == "random") {
+          text = replaceWordsWithRandom(text, token, word.replace);
+        } else {
+          text = replaceWordsWithReverse(text, token);
+        }
       }
     });
     setOutput(text);
