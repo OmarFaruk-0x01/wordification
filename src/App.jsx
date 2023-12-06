@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./components/Button";
 import TokensModal from "./components/TokensModal";
 import useOnClickOutside from "./hooks/use-click-outside";
 import useHotkeys from "./hooks/use-hot-keys";
 import { replaceWordsWithRandom, replaceWordsWithReverse } from "./utils";
-import words from "./words.json";
+
+const wordsApi = () =>
+  fetch(
+    `https://raw.githubusercontent.com/OmarFaruk-0x01/wordification/main/src/words.json`
+  ).then((data) => data.json());
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -12,6 +16,7 @@ const App = () => {
   const [replaceType, setReplaceType] = useState("reverse");
   const [copied, setCopied] = useState(false);
   const [show, setShow] = useState(false);
+  const [words, setWords] = useState([]);
   const { ref } = useOnClickOutside(() => {
     setShow(false);
   });
@@ -24,6 +29,12 @@ const App = () => {
       },
     ],
   ]);
+
+  useEffect(() => {
+    wordsApi().then((data) => {
+      setWords(data);
+    });
+  }, []);
 
   const parsedInput = () => {
     let text = input;
